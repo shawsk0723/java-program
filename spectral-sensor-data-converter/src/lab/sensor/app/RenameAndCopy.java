@@ -1,11 +1,14 @@
-package lab.sensor.file;
+package lab.sensor.app;
 
 import java.util.List;
 
+import lab.sensor.file.FileCopy;
+import lab.sensor.file.FilePathSeparator;
+import lab.sensor.file.SendsorDataFileLister;
 import lab.sensor.log.Log;
 
-public class SendsorDataFileMover {
-	private static String TAG = SendsorDataFileMover.class.getSimpleName();
+public class RenameAndCopy {
+	private static String TAG = SendsorDataFileLister.class.getSimpleName();
 
 	private static final String FILE_PATH_SEPARATOR = "\\";
 	
@@ -15,12 +18,12 @@ public class SendsorDataFileMover {
 	private String srcRootPath;
 	private String destRootPath;
 	
-	public SendsorDataFileMover(String srcRootPath, String destRootPath) {
+	public RenameAndCopy(String srcRootPath, String destRootPath) {
 		this.srcRootPath = srcRootPath;
 		this.destRootPath= destRootPath;
 	}
 
-	public void renameAndMove() {
+	public void execute() {
 		/*
 			source folder structure
 			: [fabric]/[sub-fabric]/[iteration-number].file-ext
@@ -34,26 +37,20 @@ public class SendsorDataFileMover {
 		*/
 
 		try {
-			List<String> fabricPathList = ChildFileLister.getChildFileList(srcRootPath);
+			Log.i(TAG, "sensor data rename and copy start ~");
+
+			List<String> sensorDataFileList = SendsorDataFileLister.getSensorDataFileList(srcRootPath);
 	
-			for(String fabricPath : fabricPathList) {
-				List<String> subFabricPathList = ChildFileLister.getChildFileList(fabricPath);
-				for(String subFabricPath : subFabricPathList) {
-					//Log.d(TAG, "sub fabric path = " + subFabricPath);
-					List<String> sensorDataFileList = ChildFileLister.getChildFileList(subFabricPath);
-					for(String sensorDataFile : sensorDataFileList) {
-						Log.d(TAG, "src file = " + sensorDataFile);
-						String destFileFullPath = makeDestFileFullPath(sensorDataFile);
-						Log.d(TAG, "dest file " + destFileFullPath);
-						FileCopy.copy(sensorDataFile, destFileFullPath);
-					}
-				}
+			for(String sensorDataFile : sensorDataFileList) {
+				String destFileFullPath = makeDestFileFullPath(sensorDataFile);
+				Log.d(TAG, "dest file " + destFileFullPath);
+				FileCopy.copy(sensorDataFile, destFileFullPath);
 			}
 
-			Log.i(TAG, "File Conversion Success ~");
+			Log.i(TAG, "sensor data rename and copy success ~");
 		} catch(Exception e) {
 			Log.e(TAG, e);
-			Log.i(TAG, "File Conversion Fail ~");
+			Log.i(TAG, "sensor data rename and copy fail ~");
 		}
 	}
 
