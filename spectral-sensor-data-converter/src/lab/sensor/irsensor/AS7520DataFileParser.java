@@ -1,16 +1,13 @@
 package lab.sensor.irsensor;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import lab.sensor.log.Log;
 
-public class AS7520DataFileParser implements SensorDataFileParser {
-	private static final String TAG = AS7520DataFileParser.class.getSimpleName(); 
+public class AS7520DataFileParser implements ISensorDataFileParser {
 	
 	private static final String STR_WAVE_LENGTH = "Wavelength";
 	private static final String COMA = ",";

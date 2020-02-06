@@ -8,7 +8,7 @@ import lab.sensor.file.FileIOConst;
 import lab.sensor.file.FilePathSeparator;
 import lab.sensor.file.SendsorDataFileLister;
 import lab.sensor.irsensor.AS7520DataFileParser;
-import lab.sensor.irsensor.SensorDataFileParser;
+import lab.sensor.irsensor.ISensorDataFileParser;
 import lab.sensor.log.Log;
 
 public class SensorDataToCsvConverter {
@@ -35,7 +35,7 @@ public class SensorDataToCsvConverter {
 
 			List<String> sensorDataFileList = SendsorDataFileLister.getSensorDataFileList(srcRootPath);
 	
-			SensorDataFileParser sensorDataParser = new AS7520DataFileParser();
+			ISensorDataFileParser sensorDataParser = new AS7520DataFileParser();
 			List<String>waveLengthList = sensorDataParser.getWaveLengthList(sensorDataFileList.get(0));
 			
 			CsvWriter csvWriter = new CsvWriter(destRootPath + FileIOConst.FILE_PATH_SEPARATOR + CSV_FILE_NAME); 
@@ -47,7 +47,7 @@ public class SensorDataToCsvConverter {
 
 			Log.i(TAG, "sensor data convert success ~");
 		} catch(Exception e) {
-			Log.e(TAG, e);
+			e.printStackTrace();
 			Log.i(TAG, "sensor data convert fail ~");
 		}
 	}
@@ -61,7 +61,7 @@ public class SensorDataToCsvConverter {
 		return headerRow;
 	}
 
-	private List<String> makeCsvDataRow(String sensorDataFile, SensorDataFileParser sensorDataParser) {
+	private List<String> makeCsvDataRow(String sensorDataFile, ISensorDataFileParser sensorDataParser) {
 		List<String> dataRow = new ArrayList<>();
 		String validPath = sensorDataFile.replace(srcRootPath + FileIOConst.FILE_PATH_SEPARATOR, "");
 		List<String> pathComponents = FilePathSeparator.splitFilePath(validPath);

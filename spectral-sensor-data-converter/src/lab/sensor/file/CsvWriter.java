@@ -14,7 +14,7 @@ public class CsvWriter {
 		this.file = new File(filePath);
 	}
 
-	public void createAndWriteHeader(List<String> headers) {
+	public void createAndWriteHeader(List<String> headers) throws Exception {
 		try {
 			String line = "";
 			for(String header : headers) {
@@ -26,13 +26,11 @@ public class CsvWriter {
 			bufferedWriter.newLine();
 			bufferedWriter.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw e;
 		}
-		
 	}
 	
-	public void addRow(List<String> rowList) {
+	public void addRow(List<String> rowList) throws Exception {
 		try {
 			String line = "";
 			for(String row : rowList) {
@@ -44,8 +42,7 @@ public class CsvWriter {
 			bufferedWriter.newLine();
 			bufferedWriter.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw e;
 		}
 	}
 
