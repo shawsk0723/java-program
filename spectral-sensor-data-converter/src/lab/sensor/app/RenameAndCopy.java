@@ -58,9 +58,7 @@ public class RenameAndCopy {
 	private String makeDestFileFullPath(String srcFileFullPath) {
 		String destFileFullPath = "";
 		String validPath = srcFileFullPath.replace(srcRootPath + FILE_PATH_SEPARATOR, "");
-		//Log.d(TAG, validPath);
 		List<String> pathComponents = FilePathSeparator.splitFilePath(validPath);
-		//Log.d(TAG, pathComponents.toString());
 
 		destFileFullPath = destRootPath + FILE_PATH_SEPARATOR + 
 							pathComponents.get(0) + FN_DELIM_FIRST + 
