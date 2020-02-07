@@ -20,12 +20,10 @@ public class SensorDataToCsvConverter {
 	
 	private static final String CSV_FILE_NAME = "Absorbance.csv";
 	
-	private String srcRootPath;
-	private String destRootPath;
+	private SensorDataInfo sensorDataInfo;
 	
-	public SensorDataToCsvConverter(String srcRootPath, String destRootPath) {
-		this.srcRootPath = srcRootPath;
-		this.destRootPath= destRootPath;
+	public SensorDataToCsvConverter(SensorDataInfo sensorDataInfo) {
+		this.sensorDataInfo = sensorDataInfo;
 	}
 
 	public void execute() {
@@ -33,12 +31,12 @@ public class SensorDataToCsvConverter {
 		try {
 			Log.i(TAG, "sensor data convert start ~");
 
-			List<String> sensorDataFileList = SendsorDataFileLister.getSensorDataFileList(srcRootPath);
+			List<String> sensorDataFileList = SendsorDataFileLister.getSensorDataFileList(sensorDataInfo.getSrcRootPath());
 	
 			ISensorDataFileParser sensorDataParser = new AS7520DataFileParser();
 			List<String>waveLengthList = sensorDataParser.getWaveLengthList(sensorDataFileList.get(0));
 			
-			CsvWriter csvWriter = new CsvWriter(destRootPath + FileIOConst.FILE_PATH_SEPARATOR + CSV_FILE_NAME); 
+			CsvWriter csvWriter = new CsvWriter(sensorDataInfo.getDestRootPath() + FileIOConst.FILE_PATH_SEPARATOR + CSV_FILE_NAME); 
 			csvWriter.createAndWriteHeader(makeCsvHeaderRow(waveLengthList));
 
 			for(String sensorDataFile : sensorDataFileList) {
@@ -63,7 +61,7 @@ public class SensorDataToCsvConverter {
 
 	private List<String> makeCsvDataRow(String sensorDataFile, ISensorDataFileParser sensorDataParser) {
 		List<String> dataRow = new ArrayList<>();
-		String validPath = sensorDataFile.replace(srcRootPath + FileIOConst.FILE_PATH_SEPARATOR, "");
+		String validPath = sensorDataFile.replace(sensorDataInfo.getSrcRootPath() + FileIOConst.FILE_PATH_SEPARATOR, "");
 		List<String> pathComponents = FilePathSeparator.splitFilePath(validPath);
 		for(int i = 0; i < pathComponents.size(); i++) {
 			if(i == 2) {
