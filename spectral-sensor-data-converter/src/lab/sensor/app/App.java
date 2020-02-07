@@ -8,8 +8,9 @@ public class App {
 		try {
 			SensorDataInfo sensorDataInfo = new InputArgumentParser().parseInputArgument(args);
 			new SensorDataToCsvConverter(sensorDataInfo).execute();
-		} catch (Exception e) {
+		} catch (IllegalArgumentException e) {
 			Log.i(e.getMessage());
+			HelpMessage.print();
 		}
 
 	}
