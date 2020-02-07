@@ -1,4 +1,4 @@
-package lab.sensor.app;
+package lab.sensor.irsensor;
 
 public class SensorList {
 	public static final String AS7420 = "AS7420";
