@@ -15,6 +15,8 @@ public class SensorParserMap {
 	private SensorParserMap() {
 		supportedSensorParserMap = new HashMap<>();
 		supportedSensorParserMap.put(SensorList.AS7520, new AS7520DataFileParser());
+		supportedSensorParserMap.put(SensorList.AS7420, new AS7420DataFileParser());
+		supportedSensorParserMap.put(SensorList.NEO_SPECTRA_MICRO, new neospectraDataFileParser());
 	}
 
 	public static SensorParserMap getInstance() {
