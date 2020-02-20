@@ -14,9 +14,9 @@ import lab.sensor.log.Log;
 public class SensorDataToCsvConverter {
 	private static final String TAG = SensorDataToCsvConverter.class.getSimpleName();
 
-	private static final String FIRST_HEADER = "Num_Data";
-	private static final String SECOND_HEADER = "sample name";
-	private static final String THIRD_HEADER = "iteration";
+	private static final String FIRST_HEADER = "Fabric";
+	private static final String SECOND_HEADER = "Sample";
+	private static final String THIRD_HEADER = "Iteration";
 	
 	private static final String STR_ABSORBANCE = "Absorbance";
 	private static final String CSV_EXT = ".csv";
