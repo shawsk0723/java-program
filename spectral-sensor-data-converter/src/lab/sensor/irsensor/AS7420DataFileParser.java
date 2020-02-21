@@ -21,48 +21,30 @@ public class AS7420DataFileParser implements ISensorDataFileParser {
 
 	@Override
 	public List<String> getWaveLengthList(String sensorDataFilePath) {
-		return readRawDataByraw(sensorDataFilePath, COLUMN_IDX_WAVELENGTH);
+		return readRawDataByraw(sensorDataFilePath, COLUMN_IDX_WAVELENGTH, STR_WAVE_LENGTH, WAVELENGTH_PARSING);
 	}
 
 	@Override
 	public List<String> getRawDataList(String sensorDataFilePath) {
-		return readRawDataByraw(sensorDataFilePath, COLUMN_IDX_DATA_REFLECTANCE);
+		return readRawDataByraw(sensorDataFilePath, COLUMN_IDX_DATA_REFLECTANCE, STR_MEASURE_DATA, RAWDATA_PARSING);
 	}
 
-	private List<String> readRawDataByraw(String sensorDataFilePath, int columnIndex) {
+	private List<String> readRawDataByraw(String sensorDataFilePath, int columnIndex, String Parse_data1,
+			String Parse_data2) {
 		List<String> rawDataList = new ArrayList<String>();
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(sensorDataFilePath));
 
 			String line = null;
 
-			if (columnIndex == COLUMN_IDX_WAVELENGTH) {
-
-				while ((line = br.readLine()) != null) {
-					if (line.contains(STR_WAVE_LENGTH)) {
-						String[] lineSplit1 = line.split(WAVELENGTH_PARSING);
-						lineSplit1 = lineSplit1[1].split(DATA_END_POINT);
-						lineSplit1 = lineSplit1[0].split(SEMICOLUMN);
-						rawDataList = Arrays.asList(lineSplit1);
-						//System.out.println(rawDataList);
-						break;
-					}
-				}
-
-			} else {
-
-				while ((line = br.readLine()) != null) {
-
-					if (line.contains(STR_MEASURE_DATA)) {
-
-						String[] lineSplit2 = line.split(RAWDATA_PARSING);
-						lineSplit2 = lineSplit2[1].split(DATA_END_POINT);
-						lineSplit2 = lineSplit2[0].split(SEMICOLUMN);
-						rawDataList = Arrays.asList(lineSplit2);
-						//System.out.println(rawDataList);
-
-						break;
-					}
+			while ((line = br.readLine()) != null) {
+				if (line.contains(Parse_data1)) {
+					String[] lineSplit = line.split(Parse_data2);
+					lineSplit = lineSplit[1].split(DATA_END_POINT);
+					lineSplit = lineSplit[0].split(SEMICOLUMN);
+					rawDataList = Arrays.asList(lineSplit);
+					System.out.println(rawDataList);
+					break;
 				}
 			}
 
