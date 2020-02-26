@@ -15,6 +15,11 @@ public class neospectraDataFileParser implements ISensorDataFileParser {
 	
 
 	@Override
+	public void setDataType(String dataType) {
+
+	}
+	
+	@Override
 	public List<String> getWaveLengthList(String sensorDataFilePath) {
 		return readRawDataByColumn(sensorDataFilePath, COLUMN_IDX_WAVELENGTH);
 	}

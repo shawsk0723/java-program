@@ -4,56 +4,86 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+import lab.sensor.log.Log;
+
 public class AS7420DataFileParser implements ISensorDataFileParser {
+ 
+	private static final String KEY_DATA_TYPE = "DataType";
+	private static final String KEY_WAVE_LENGTH = "Wavelength";
+	private static final String KEY_MEASURE_DATA = "Measure data;";
+	private static final String SEMICOLON = ";";
 
-	private static final String STR_WAVE_LENGTH = "Wavelength [nm];;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;";
-	private static final String STR_MEASURE_DATA = "Measure data;";
-	private static final String SEMICOLUMN = ";";
-	private static final String WAVELENGTH_PARSING = ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;";
-	private static final String RAWDATA_PARSING = ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;";
-	private static final String DATA_END_POINT = ";;";
-
-	private static final int COLUMN_IDX_WAVELENGTH = 0;
-	private static final int COLUMN_IDX_DATA_REFLECTANCE = 1;
-
+	private String dataType;
+	private AS7420LineDataRange lineDataRange;
+	
+	public AS7420DataFileParser() {
+		this.dataType = AS7420Const.RAW_DATA;
+	}
+	
+	@Override
+	public void setDataType(String dataType) {
+		this.dataType = dataType;
+	}
+	
 	@Override
 	public List<String> getWaveLengthList(String sensorDataFilePath) {
-		return readRawDataByraw(sensorDataFilePath, COLUMN_IDX_WAVELENGTH, STR_WAVE_LENGTH, WAVELENGTH_PARSING);
+		List<String> waveLengthList = new ArrayList<String>();
+		try {
+			lineDataRange = makeLineDataRange(sensorDataFilePath);
+			Log.i("lineDataRange = " + lineDataRange);
+			waveLengthList =  getDataListFromFile(sensorDataFilePath, KEY_WAVE_LENGTH);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		return waveLengthList;
 	}
 
 	@Override
 	public List<String> getRawDataList(String sensorDataFilePath) {
-		return readRawDataByraw(sensorDataFilePath, COLUMN_IDX_DATA_REFLECTANCE, STR_MEASURE_DATA, RAWDATA_PARSING);
+		return getDataListFromFile(sensorDataFilePath, KEY_MEASURE_DATA);
 	}
 
-	private List<String> readRawDataByraw(String sensorDataFilePath, int columnIndex, String Parse_data1,
-			String Parse_data2) {
+	private List<String> getDataListFromFile(String sensorDataFilePath, String keyToFindLine) {
 		List<String> rawDataList = new ArrayList<String>();
 		try {
-			BufferedReader br = new BufferedReader(new FileReader(sensorDataFilePath));
-
-			String line = null;
-
-			while ((line = br.readLine()) != null) {
-				if (line.contains(Parse_data1)) {
-					String[] lineSplit = line.split(Parse_data2);
-					lineSplit = lineSplit[1].split(DATA_END_POINT);
-					lineSplit = lineSplit[0].split(SEMICOLUMN);
-					rawDataList = Arrays.asList(lineSplit);
-					System.out.println(rawDataList);
-					break;
-				}
+			String line = getDataLine(sensorDataFilePath, keyToFindLine);
+			String[] lineSplit = line.split(SEMICOLON);
+			for(int i = lineDataRange.getOffset(); i < lineDataRange.getOffset() + lineDataRange.getLength(); i++) {
+				rawDataList.add(lineSplit[i]);
 			}
 
-			br.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return rawDataList;
+	}
+
+	private AS7420LineDataRange makeLineDataRange(String sensorDataFilePath) throws Exception {
+		String dataLine = getDataLine(sensorDataFilePath, KEY_DATA_TYPE);
+		String[] dataLineSplit = dataLine.split(SEMICOLON);
+
+		Log.i("dataLine = " + dataLine);
+		Log.i("dataLineSplit = " + dataLineSplit);
+		
+		lineDataRange = new AS7420LineDataRange();
+		lineDataRange.setOffset(DataLineAnalyzer.findFirstIndexOfKey(dataLineSplit, dataType));
+		lineDataRange.setLength(DataLineAnalyzer.findCountOfKey(dataLineSplit, dataType));
+		return lineDataRange;
+	}
+	
+	private String getDataLine(String sensorDataFilePath, String keyToFindLine) throws IOException {
+		String dataLine = "";
+		BufferedReader br = new BufferedReader(new FileReader(sensorDataFilePath));
+		while ((dataLine = br.readLine()) != null) {
+			if (dataLine.contains(keyToFindLine)) {
+				break;
+			}
+		}
+
+		br.close();
+		return dataLine;		
 	}
 
 }

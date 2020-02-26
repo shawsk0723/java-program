@@ -14,7 +14,11 @@ public class AS7520DataFileParser implements ISensorDataFileParser {
 	private static final int COLUMN_IDX_WAVELENGTH = 0;
 	private static final int COLUMN_IDX_DATA_REFLECTANCE = 1;
 	
+	@Override
+	public void setDataType(String dataType) {
 
+	}
+	
 	@Override
 	public List<String> getWaveLengthList(String sensorDataFilePath) {
 		return readRawDataByColumn(sensorDataFilePath, COLUMN_IDX_WAVELENGTH);
