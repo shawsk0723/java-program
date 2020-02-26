@@ -1,10 +1,12 @@
-package lab.sensor.irsensor;
+package lab.sensor.irsensor.as7520;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import lab.sensor.irsensor.ISensorDataFileParser;
 
 
 public class AS7520DataFileParser implements ISensorDataFileParser {

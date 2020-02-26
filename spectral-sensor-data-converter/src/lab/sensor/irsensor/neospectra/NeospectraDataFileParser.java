@@ -1,12 +1,14 @@
-package lab.sensor.irsensor;
+package lab.sensor.irsensor.neospectra;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import lab.sensor.irsensor.ISensorDataFileParser;
 
-public class neospectraDataFileParser implements ISensorDataFileParser {
+
+public class NeospectraDataFileParser implements ISensorDataFileParser {
 
 	private static final String STR_WAVE_LENGTH = "Wavelength";
 	private static final String TAB = "\t";

@@ -1,6 +1,6 @@
-package lab.sensor.irsensor;
+package lab.sensor.irsensor.as7420;
 
-public class AS7420Const {
+public class Const {
 
 	public static final String RAW_DATA = "RawData";
 	public static final String SPECTRUM = "Spectrum";

@@ -7,6 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import lab.sensor.irsensor.as7420.AS7420DataFileParser;
+import lab.sensor.irsensor.as7520.AS7520DataFileParser;
+import lab.sensor.irsensor.neospectra.NeospectraDataFileParser;
+
 public class SensorParserMap {
 	private static final SensorParserMap instance = new SensorParserMap();
 	
@@ -16,7 +20,7 @@ public class SensorParserMap {
 		supportedSensorParserMap = new HashMap<>();
 		supportedSensorParserMap.put(SensorList.AS7520, new AS7520DataFileParser());
 		supportedSensorParserMap.put(SensorList.AS7420, new AS7420DataFileParser());
-		supportedSensorParserMap.put(SensorList.NEO_SPECTRA_MICRO, new neospectraDataFileParser());
+		supportedSensorParserMap.put(SensorList.NEO_SPECTRA_MICRO, new NeospectraDataFileParser());
 	}
 
 	public static SensorParserMap getInstance() {

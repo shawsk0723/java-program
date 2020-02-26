@@ -1,4 +1,4 @@
-package lab.sensor.irsensor;
+package lab.sensor.irsensor.as7420;
 
 import lab.sensor.log.Log;
 
@@ -19,7 +19,7 @@ public class DataLineAnalyzer {
 		for(int i = 0; i < list. length; i++) {
 			//Log.i("list[" + i + "] =" + list[i]);
 			if(list[i].contains(key))  {
-				Log.i("list[" + i + "] =" + list[i]);
+				//Log.i("list[" + i + "] =" + list[i]);
 				count++;
 			}
 		}

@@ -1,6 +1,6 @@
-package lab.sensor.irsensor;
+package lab.sensor.irsensor.as7420;
 
-public enum AS7420DataType {
+public enum DataType {
 	RAW_DATA("RawData"),
 	SPECTRUM("Spectrum"),
 	FIRST_DERIVATIVE("1.Derivative"),
@@ -8,7 +8,7 @@ public enum AS7420DataType {
 
 	private String name;
 
-	AS7420DataType(String name) {
+	DataType(String name) {
 		this.name = name;
 	}
 

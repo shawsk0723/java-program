@@ -1,10 +1,10 @@
-package lab.sensor.irsensor;
+package lab.sensor.irsensor.as7420;
 
-public class AS7420LineDataRange {
+public class LineDataRange {
 	private int offset = 0;
 	private int length = 0;
 
-	public AS7420LineDataRange() {
+	public LineDataRange() {
 
 	}
 

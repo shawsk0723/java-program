@@ -1,4 +1,4 @@
-package lab.sensor.irsensor;
+package lab.sensor.irsensor.as7420;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import lab.sensor.irsensor.ISensorDataFileParser;
 import lab.sensor.log.Log;
 
 public class AS7420DataFileParser implements ISensorDataFileParser {
@@ -16,10 +17,10 @@ public class AS7420DataFileParser implements ISensorDataFileParser {
 	private static final String SEMICOLON = ";";
 
 	private String dataType;
-	private AS7420LineDataRange lineDataRange;
+	private LineDataRange lineDataRange;
 	
 	public AS7420DataFileParser() {
-		this.dataType = AS7420Const.RAW_DATA;
+		this.dataType = Const.RAW_DATA;
 	}
 	
 	@Override
@@ -32,7 +33,7 @@ public class AS7420DataFileParser implements ISensorDataFileParser {
 		List<String> waveLengthList = new ArrayList<String>();
 		try {
 			lineDataRange = makeLineDataRange(sensorDataFilePath);
-			Log.i("lineDataRange = " + lineDataRange);
+			//Log.i("lineDataRange = " + lineDataRange);
 			waveLengthList =  getDataListFromFile(sensorDataFilePath, KEY_WAVE_LENGTH);
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -60,14 +61,14 @@ public class AS7420DataFileParser implements ISensorDataFileParser {
 		return rawDataList;
 	}
 
-	private AS7420LineDataRange makeLineDataRange(String sensorDataFilePath) throws Exception {
+	private LineDataRange makeLineDataRange(String sensorDataFilePath) throws Exception {
 		String dataLine = getDataLine(sensorDataFilePath, KEY_DATA_TYPE);
 		String[] dataLineSplit = dataLine.split(SEMICOLON);
 
-		Log.i("dataLine = " + dataLine);
-		Log.i("dataLineSplit = " + dataLineSplit);
+		//Log.i("dataLine = " + dataLine);
+		//Log.i("dataLineSplit = " + dataLineSplit);
 		
-		lineDataRange = new AS7420LineDataRange();
+		lineDataRange = new LineDataRange();
 		lineDataRange.setOffset(DataLineAnalyzer.findFirstIndexOfKey(dataLineSplit, dataType));
 		lineDataRange.setLength(DataLineAnalyzer.findCountOfKey(dataLineSplit, dataType));
 		return lineDataRange;
