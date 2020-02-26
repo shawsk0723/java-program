@@ -20,7 +20,7 @@ public class AS7420DataFileParser implements ISensorDataFileParser {
 	private LineDataRange lineDataRange;
 	
 	public AS7420DataFileParser() {
-		this.dataType = Const.RAW_DATA;
+		this.dataType = AS7420DataType.RAW_DATA;
 	}
 	
 	@Override

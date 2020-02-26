@@ -1,6 +1,6 @@
 package lab.sensor.app;
 
-import lab.sensor.irsensor.SensorParserMap;
+import lab.sensor.irsensor.SensorParserManager;
 
 public class HelpMessage {
 	private static final String HELP_MESSAGE = "Inupt arguments format. \n"
@@ -11,6 +11,6 @@ public class HelpMessage {
 	public static void print() {
 		System.out.println(HELP_MESSAGE);
 		System.out.println(SUPPORTED_SENSOR_LIST + 
-							SensorParserMap.getInstance().getSupportedSensorList());
+							SensorParserManager.getInstance().getSupportedSensorList());
 	}
 }

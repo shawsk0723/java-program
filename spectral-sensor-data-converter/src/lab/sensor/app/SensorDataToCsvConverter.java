@@ -8,7 +8,7 @@ import lab.sensor.file.FileIOConst;
 import lab.sensor.file.FilePathSeparator;
 import lab.sensor.file.SendsorDataFileLister;
 import lab.sensor.irsensor.ISensorDataFileParser;
-import lab.sensor.irsensor.SensorParserMap;
+import lab.sensor.irsensor.SensorParserManager;
 import lab.sensor.log.Log;
 
 public class SensorDataToCsvConverter {
@@ -18,7 +18,6 @@ public class SensorDataToCsvConverter {
 	private static final String SECOND_HEADER = "Sample";
 	private static final String THIRD_HEADER = "Iteration";
 	
-	private static final String STR_ABSORBANCE = "Absorbance";
 	private static final String CSV_EXT = ".csv";
 	private static final String UNDER_BAR = "_";
 	
@@ -35,15 +34,23 @@ public class SensorDataToCsvConverter {
 
 			List<String> sensorDataFileList = SendsorDataFileLister.getSensorDataFileList(sensorDataInfo.getSrcRootPath());
 	
-			ISensorDataFileParser sensorDataParser = SensorParserMap.getInstance().getSensorDataFileParser(sensorDataInfo.getSensorName());
-			List<String>waveLengthList = sensorDataParser.getWaveLengthList(sensorDataFileList.get(0));
-			
-			String csvFileName = STR_ABSORBANCE + UNDER_BAR + sensorDataInfo.getSensorName() + CSV_EXT;
-			CsvWriter csvWriter = new CsvWriter(sensorDataInfo.getDestRootPath() + FileIOConst.FILE_PATH_SEPARATOR + csvFileName); 
-			csvWriter.createAndWriteHeader(makeCsvHeaderRow(waveLengthList));
+			String sensorName = sensorDataInfo.getSensorName();
+			SensorParserManager sensorParserManager = SensorParserManager.getInstance();
+			ISensorDataFileParser sensorDataParser = sensorParserManager.getSensorDataFileParser(sensorName);
+			List<String> availableDataTypeList = sensorParserManager.getAvailableDataTypeList(sensorName);
 
-			for(String sensorDataFile : sensorDataFileList) {
-				csvWriter.addRow(makeCsvDataRow(sensorDataFile, sensorDataParser));
+			for(String dataType : availableDataTypeList) {
+				sensorDataParser.setDataType(dataType);
+
+				List<String>waveLengthList = sensorDataParser.getWaveLengthList(sensorDataFileList.get(0));
+				
+				String csvFileName = sensorName + UNDER_BAR + dataType + CSV_EXT;
+				CsvWriter csvWriter = new CsvWriter(sensorDataInfo.getDestRootPath() + FileIOConst.FILE_PATH_SEPARATOR + csvFileName); 
+				csvWriter.createAndWriteHeader(makeCsvHeaderRow(waveLengthList));
+	
+				for(String sensorDataFile : sensorDataFileList) {
+					csvWriter.addRow(makeCsvDataRow(sensorDataFile, sensorDataParser));
+				}
 			}
 
 			Log.i(TAG, "sensor data convert success ~");

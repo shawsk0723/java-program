@@ -2,7 +2,8 @@ package lab.sensor.app;
 
 import lab.sensor.file.DirChecker;
 import lab.sensor.irsensor.SensorNotSupportedException;
-import lab.sensor.irsensor.SensorParserMap;
+import lab.sensor.irsensor.SensorParserManager;
+
 
 public class InputArgumentParser {
 
@@ -22,7 +23,7 @@ public class InputArgumentParser {
 		} 
 
 		try {
-			SensorParserMap.getInstance().getSensorDataFileParser(args[0]);
+			SensorParserManager.getInstance().getSensorDataFileParser(args[0]);
 		} catch (SensorNotSupportedException e) {
 			throw new IllegalArgumentException(args[0] + " sensor is not supported ~");
 		}
