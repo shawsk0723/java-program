@@ -12,6 +12,7 @@ import lab.sensor.irsensor.as7420.AS7420DataFileParser;
 import lab.sensor.irsensor.as7420.AS7420DataType;
 import lab.sensor.irsensor.as7520.AS7520DataFileParser;
 import lab.sensor.irsensor.neospectra.NeospectraDataFileParser;
+import lab.sensor.irsensor.nironesensorx.NironeSensorXDataFileParser;
 
 public class SensorParserManager {
 	private static final SensorParserManager instance = new SensorParserManager();
@@ -26,6 +27,7 @@ public class SensorParserManager {
 		sensorParserMap.put(SensorList.AS7520, new SensorParserAttribute(new AS7520DataFileParser(), defaultDataTypeList));
 		sensorParserMap.put(SensorList.AS7420, new SensorParserAttribute(new AS7420DataFileParser(), AS7420DataTypeList));
 		sensorParserMap.put(SensorList.NEO_SPECTRA_MICRO, new SensorParserAttribute(new NeospectraDataFileParser(), defaultDataTypeList));
+		sensorParserMap.put(SensorList.NIRONE_SENSOR_X, new SensorParserAttribute(new NironeSensorXDataFileParser(), defaultDataTypeList));
 	}
 
 	public static SensorParserManager getInstance() {
