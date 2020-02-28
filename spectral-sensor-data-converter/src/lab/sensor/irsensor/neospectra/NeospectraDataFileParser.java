@@ -33,6 +33,7 @@ public class NeospectraDataFileParser implements ISensorDataFileParser {
 
 	private List<String> readRawDataByColumn(String sensorDataFilePath, int columnIndex) {
 		List<String> rawDataList = new ArrayList<String>();
+		double data=0;
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(sensorDataFilePath));
 			String line = null;
@@ -43,6 +44,15 @@ public class NeospectraDataFileParser implements ISensorDataFileParser {
 			}
 			while((line = br.readLine()) != null) {
 				String[] lineSplit = line.split(TAB);
+				
+				if(columnIndex==COLUMN_IDX_WAVELENGTH)
+				{
+					data = Double.parseDouble(lineSplit[columnIndex]);
+					data = Math.floor(data);
+					//System.out.println(data);
+					lineSplit[columnIndex]=Integer.toString((int)data);
+					//System.out.println(lineSplit[columnIndex]);					
+				}
 				rawDataList.add(lineSplit[columnIndex]);
 			}
 			br.close();
