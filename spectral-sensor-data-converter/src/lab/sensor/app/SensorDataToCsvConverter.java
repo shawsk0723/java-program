@@ -47,10 +47,10 @@ public class SensorDataToCsvConverter {
 				
 				String csvFileName = sensorName + UNDER_BAR + dataType + CSV_EXT;
 				CsvWriter csvWriter = new CsvWriter(sensorDataInfo.getDestRootPath() + FileIOConst.FILE_PATH_SEPARATOR + csvFileName); 
-				csvWriter.createAndWriteHeader(makeCsvHeaderRow(waveLengthList));
+				writeCsvHeaderRow(csvWriter, waveLengthList);
 	
 				for(String sensorDataFile : sensorDataFileList) {
-					csvWriter.addRow(makeCsvDataRow(sensorDataFile, sensorDataParser));
+					writeCsvDataRow(csvWriter, sensorDataParser, sensorDataFile);
 				}
 			}
 
@@ -61,31 +61,35 @@ public class SensorDataToCsvConverter {
 		}
 	}
 
-	private List<String> makeCsvHeaderRow(List<String> waveLengthList) {
+	private void writeCsvHeaderRow(CsvWriter csvWriter, List<String> waveLengthList) throws Exception {
 		List<String> headerRow = new ArrayList<>();
 		headerRow.add(FIRST_HEADER);
 		headerRow.add(SECOND_HEADER);
 		headerRow.add(THIRD_HEADER);
 		headerRow.addAll(waveLengthList);
-		return headerRow;
+		csvWriter.createAndWriteHeader(headerRow);
 	}
 
-	private List<String> makeCsvDataRow(String sensorDataFile, ISensorDataFileParser sensorDataParser) {
+	private void writeCsvDataRow(CsvWriter csvWriter, ISensorDataFileParser sensorDataParser, String sensorDataFile) throws Exception {
 		List<String> dataRow = new ArrayList<>();
 		String validPath = sensorDataFile.replace(sensorDataInfo.getSrcRootPath() + FileIOConst.FILE_PATH_SEPARATOR, "");
 		List<String> pathComponents = FilePathSeparator.splitFilePath(validPath);
-		for(int i = 0; i < pathComponents.size(); i++) {
-			if(i == 2) {
-				dataRow.add(pathComponents.get(i).split("\\.(?=[^\\.]+$)")[0]);
-			} else {
-				dataRow.add(pathComponents.get(i));
-			}
-		}
+
+		String fabric = pathComponents.get(0);
+		String sample = pathComponents.get(1);
+		String iteration = pathComponents.get(2).split("\\.(?=[^\\.]+$)")[0];
+
+		dataRow.add(fabric);
+		dataRow.add(sample);
+		dataRow.add(iteration);
 		
 		SensorDataRecords sensorDataRecords = sensorDataParser.getSensorDataRecords(sensorDataFile);
 		for(int i = 0; i < sensorDataRecords.size(); i++) {
+
 			dataRow.addAll(sensorDataRecords.read(i));
+			csvWriter.addRow(dataRow);
+			
+			dataRow.subList(3, dataRow.size()).clear();
 		}
-		return dataRow;
 	}
 }

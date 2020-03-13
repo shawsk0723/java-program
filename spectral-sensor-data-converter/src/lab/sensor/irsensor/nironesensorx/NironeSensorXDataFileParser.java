@@ -38,9 +38,11 @@ public class NironeSensorXDataFileParser implements ISensorDataFileParser {
 	public SensorDataRecords getSensorDataRecords(String sensorDataFilePath) {
 		SensorDataRecords sensorDataRecords = new SensorDataRecords();
 		try {
-			String rawDataLine = getDataLine(sensorDataFilePath, RAW_DATA_ROW_IDX);
-			List<String> record = extractData(rawDataLine);
-			sensorDataRecords.write(record);
+			List<String> rawDataLines = getDataLines(sensorDataFilePath, RAW_DATA_ROW_IDX);
+			for(String rawDataLine : rawDataLines) {
+				List<String> record = extractData(rawDataLine);
+				sensorDataRecords.write(record);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -62,9 +64,23 @@ public class NironeSensorXDataFileParser implements ISensorDataFileParser {
 			}
 		}
 		br.close();
-		return dataLine;		
+		return dataLine;
 	}
 
+	private List<String> getDataLines(String sensorDataFilePath, int rowIdx) throws IOException {
+		List<String> dataLines = new ArrayList<String>();
+		int count = 0;
+		String dataLine = "";
+		BufferedReader br = new BufferedReader(new FileReader(sensorDataFilePath));
+		while ((dataLine = br.readLine()) != null) {
+			if(rowIdx <= count++) {
+				dataLines.add(dataLine);
+			}
+		}
+		br.close();
+		return dataLines;
+	}
+	
 	private List<String> extractData(String dataLine) {
 		List<String> dataList = new ArrayList<>();
 		String[] dataSplitted = dataLine.split(DELIM); 
