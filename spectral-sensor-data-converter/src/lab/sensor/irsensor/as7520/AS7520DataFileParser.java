@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lab.sensor.irsensor.ISensorDataFileParser;
+import lab.sensor.irsensor.SensorDataRecords;
 
 
 public class AS7520DataFileParser implements ISensorDataFileParser {
@@ -27,9 +28,13 @@ public class AS7520DataFileParser implements ISensorDataFileParser {
 	}
 
 	@Override
-	public List<String> getRawDataList(String sensorDataFilePath) {
-		return readRawDataByColumn(sensorDataFilePath, COLUMN_IDX_DATA_REFLECTANCE);
+	public SensorDataRecords getSensorDataRecords(String sensorDataFilePath) {
+		SensorDataRecords sensorDataRecords = new SensorDataRecords();
+		List<String> record = readRawDataByColumn(sensorDataFilePath, COLUMN_IDX_DATA_REFLECTANCE);
+		sensorDataRecords.write(record);
+		return sensorDataRecords;
 	}
+
 
 	private List<String> readRawDataByColumn(String sensorDataFilePath, int columnIndex) {
 		List<String> rawDataList = new ArrayList<String>();

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lab.sensor.irsensor.ISensorDataFileParser;
+import lab.sensor.irsensor.SensorDataRecords;
 
 public class NironeSensorXDataFileParser implements ISensorDataFileParser {
 
@@ -32,14 +33,22 @@ public class NironeSensorXDataFileParser implements ISensorDataFileParser {
 		return new ArrayList<>();
 	}
 
+	
 	@Override
-	public List<String> getRawDataList(String sensorDataFilePath) {
+	public SensorDataRecords getSensorDataRecords(String sensorDataFilePath) {
+		SensorDataRecords sensorDataRecords = new SensorDataRecords();
 		try {
 			String rawDataLine = getDataLine(sensorDataFilePath, RAW_DATA_ROW_IDX);
-			return extractData(rawDataLine);
+			List<String> record = extractData(rawDataLine);
+			sensorDataRecords.write(record);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
+		return sensorDataRecords;
+	}	
+	
+	public List<String> getRawDataList(String sensorDataFilePath) {
 		return new ArrayList<>();
 	}
 
@@ -64,4 +73,5 @@ public class NironeSensorXDataFileParser implements ISensorDataFileParser {
 		}
 		return dataList;
 	}
+
 }

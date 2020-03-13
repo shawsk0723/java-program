@@ -7,7 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lab.sensor.irsensor.ISensorDataFileParser;
-import lab.sensor.log.Log;
+import lab.sensor.irsensor.SensorDataRecords;
+
 
 public class AS7420DataFileParser implements ISensorDataFileParser {
  
@@ -42,8 +43,11 @@ public class AS7420DataFileParser implements ISensorDataFileParser {
 	}
 
 	@Override
-	public List<String> getRawDataList(String sensorDataFilePath) {
-		return getDataListFromFile(sensorDataFilePath, KEY_MEASURE_DATA);
+	public SensorDataRecords getSensorDataRecords(String sensorDataFilePath) {
+		List<String> record = getDataListFromFile(sensorDataFilePath, KEY_MEASURE_DATA);
+		SensorDataRecords sensorDataRecord = new SensorDataRecords();
+		sensorDataRecord.write(record);
+		return sensorDataRecord;
 	}
 
 	private List<String> getDataListFromFile(String sensorDataFilePath, String keyToFindLine) {
@@ -84,7 +88,7 @@ public class AS7420DataFileParser implements ISensorDataFileParser {
 		}
 
 		br.close();
-		return dataLine;		
+		return dataLine;
 	}
 
 }

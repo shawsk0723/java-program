@@ -8,6 +8,7 @@ import lab.sensor.file.FileIOConst;
 import lab.sensor.file.FilePathSeparator;
 import lab.sensor.file.SendsorDataFileLister;
 import lab.sensor.irsensor.ISensorDataFileParser;
+import lab.sensor.irsensor.SensorDataRecords;
 import lab.sensor.irsensor.SensorParserManager;
 import lab.sensor.log.Log;
 
@@ -81,8 +82,10 @@ public class SensorDataToCsvConverter {
 			}
 		}
 		
-		List<String> rawDataList = sensorDataParser.getRawDataList(sensorDataFile);
-		dataRow.addAll(rawDataList);
+		SensorDataRecords sensorDataRecords = sensorDataParser.getSensorDataRecords(sensorDataFile);
+		for(int i = 0; i < sensorDataRecords.size(); i++) {
+			dataRow.addAll(sensorDataRecords.read(i));
+		}
 		return dataRow;
 	}
 }
