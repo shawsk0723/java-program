@@ -44,9 +44,11 @@ public class AS7420DataFileParser implements ISensorDataFileParser {
 
 	@Override
 	public SensorDataRecords getSensorDataRecords(String sensorDataFilePath) {
-		List<String> record = getDataListFromFile(sensorDataFilePath, KEY_MEASURE_DATA);
+		List<List<String>> records = getRecordsFromFile(sensorDataFilePath, KEY_MEASURE_DATA);
 		SensorDataRecords sensorDataRecord = new SensorDataRecords();
-		sensorDataRecord.write(record);
+		for(List<String> record : records) {
+			sensorDataRecord.write(record);
+		}
 		return sensorDataRecord;
 	}
 
@@ -63,6 +65,24 @@ public class AS7420DataFileParser implements ISensorDataFileParser {
 			e.printStackTrace();
 		}
 		return rawDataList;
+	}
+
+	private List<List<String>> getRecordsFromFile(String sensorDataFilePath, String keyToFindLine) {
+		List<List<String>> dataList = new ArrayList<>();
+		try {
+			List<String> dataLines = getDataLines(sensorDataFilePath, keyToFindLine);
+			for(String dataLine : dataLines) {
+				String[] lineSplit = dataLine.split(SEMICOLON);
+				List<String> rawDataList = new ArrayList<String>();
+				for(int i = lineDataRange.getOffset(); i < lineDataRange.getOffset() + lineDataRange.getLength(); i++) {
+					rawDataList.add(lineSplit[i]);
+				}
+				dataList.add(rawDataList);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return dataList;
 	}
 
 	private LineDataRange makeLineDataRange(String sensorDataFilePath) throws Exception {
@@ -91,4 +111,18 @@ public class AS7420DataFileParser implements ISensorDataFileParser {
 		return dataLine;
 	}
 
+	private List<String> getDataLines(String sensorDataFilePath, String keyToFindLine) throws IOException {
+		List<String> dataLines = new ArrayList<>();
+		BufferedReader br = new BufferedReader(new FileReader(sensorDataFilePath));
+		String dataLine = null;
+		while ((dataLine = br.readLine()) != null) {
+			if (dataLine.contains(keyToFindLine)) {
+				dataLines.add(dataLine);
+			}
+		}
+
+		br.close();
+		return dataLines;
+	}
+	
 }
