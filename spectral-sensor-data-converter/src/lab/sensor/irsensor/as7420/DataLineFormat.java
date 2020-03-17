@@ -1,10 +1,10 @@
 package lab.sensor.irsensor.as7420;
 
-public class LineDataRange {
+public class DataLineFormat {
 	private int offset = 0;
 	private int length = 0;
 
-	public LineDataRange() {
+	public DataLineFormat() {
 
 	}
 

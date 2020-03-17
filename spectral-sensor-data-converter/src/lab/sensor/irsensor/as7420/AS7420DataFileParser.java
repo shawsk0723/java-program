@@ -7,7 +7,6 @@ import java.util.List;
 import lab.sensor.irsensor.ISensorDataFileParser;
 import lab.sensor.irsensor.SensorDataRecords;
 
-
 public class AS7420DataFileParser implements ISensorDataFileParser {
  
 	private static final String KEY_DATA_TYPE = "DataType";
@@ -16,7 +15,7 @@ public class AS7420DataFileParser implements ISensorDataFileParser {
 	private static final String SEMICOLON = ";";
 
 	private String dataType;
-	private LineDataRange lineDataRange;
+	private DataLineFormat dataLineFormat;
 	
 	public AS7420DataFileParser() {
 		this.dataType = AS7420DataType.RAW_DATA;
@@ -31,7 +30,7 @@ public class AS7420DataFileParser implements ISensorDataFileParser {
 	public List<String> getWaveLengthList(String sensorDataFilePath) {
 		List<String> waveLengthList = new ArrayList<String>();
 		try {
-			lineDataRange = makeLineDataRange(sensorDataFilePath);
+			dataLineFormat = makeLineDataRange(sensorDataFilePath);
 			//Log.i("lineDataRange = " + lineDataRange);
 			waveLengthList =  getDataListFromFile(sensorDataFilePath, KEY_WAVE_LENGTH);
 		} catch(Exception e) {
@@ -50,49 +49,48 @@ public class AS7420DataFileParser implements ISensorDataFileParser {
 		return sensorDataRecord;
 	}
 
+	private DataLineFormat makeLineDataRange(String sensorDataFilePath) throws Exception {
+		String dataLine = DataLineExtractor.getDataLine(sensorDataFilePath, KEY_DATA_TYPE);
+		String[] dataLineSplit = dataLine.split(SEMICOLON);
+
+		dataLineFormat = new DataLineFormat();
+		dataLineFormat.setOffset(DataLineAnalyzer.findFirstIndexOfKey(dataLineSplit, dataType));
+		dataLineFormat.setLength(DataLineAnalyzer.findCountOfKey(dataLineSplit, dataType));
+		return dataLineFormat;
+	}
+	
 	private List<String> getDataListFromFile(String sensorDataFilePath, String keyToFindLine) {
-		List<String> rawDataList = new ArrayList<String>();
 		try {
 			String line = DataLineExtractor.getDataLine(sensorDataFilePath, keyToFindLine);
-			String[] lineSplit = line.split(SEMICOLON);
-			for(int i = lineDataRange.getOffset(); i < lineDataRange.getOffset() + lineDataRange.getLength(); i++) {
-				rawDataList.add(lineSplit[i]);
-			}
-
+			return extractData(dataLineFormat, line);
 		} catch (IOException e) {
 			e.printStackTrace();
+			return new ArrayList<String>();
+		}
+	}
+
+	private List<List<String>> getRecordsFromFile(String sensorDataFilePath, String keyToFindLine) {
+
+		try {
+			List<List<String>> dataList = new ArrayList<>();
+			List<String> dataLines = DataLineExtractor.getDataLines(sensorDataFilePath, keyToFindLine);
+			for(String dataLine : dataLines) {
+				dataList.add(extractData(dataLineFormat, dataLine));
+			}
+			return dataList;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return new ArrayList<List<String>>();
+		}
+	}
+
+	private List<String> extractData(DataLineFormat dataLineFormat, String dataLine) {
+		String[] lineSplit = dataLine.split(SEMICOLON);
+		List<String> rawDataList = new ArrayList<String>();
+		for(int i = dataLineFormat.getOffset(); i < dataLineFormat.getOffset() + dataLineFormat.getLength(); i++) {
+			rawDataList.add(lineSplit[i]);
 		}
 		return rawDataList;
 	}
 
-	private LineDataRange makeLineDataRange(String sensorDataFilePath) throws Exception {
-		String dataLine = DataLineExtractor.getDataLine(sensorDataFilePath, KEY_DATA_TYPE);
-		String[] dataLineSplit = dataLine.split(SEMICOLON);
-
-		//Log.i("dataLine = " + dataLine);
-		//Log.i("dataLineSplit = " + dataLineSplit);
-		
-		lineDataRange = new LineDataRange();
-		lineDataRange.setOffset(DataLineAnalyzer.findFirstIndexOfKey(dataLineSplit, dataType));
-		lineDataRange.setLength(DataLineAnalyzer.findCountOfKey(dataLineSplit, dataType));
-		return lineDataRange;
-	}
-
-	private List<List<String>> getRecordsFromFile(String sensorDataFilePath, String keyToFindLine) {
-		List<List<String>> dataList = new ArrayList<>();
-		try {
-			List<String> dataLines = DataLineExtractor.getDataLines(sensorDataFilePath, keyToFindLine);
-			for(String dataLine : dataLines) {
-				String[] lineSplit = dataLine.split(SEMICOLON);
-				List<String> rawDataList = new ArrayList<String>();
-				for(int i = lineDataRange.getOffset(); i < lineDataRange.getOffset() + lineDataRange.getLength(); i++) {
-					rawDataList.add(lineSplit[i]);
-				}
-				dataList.add(rawDataList);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return dataList;
-	}
 }
