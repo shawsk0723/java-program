@@ -1,7 +1,5 @@
 package lab.sensor.irsensor.as7420;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +53,7 @@ public class AS7420DataFileParser implements ISensorDataFileParser {
 	private List<String> getDataListFromFile(String sensorDataFilePath, String keyToFindLine) {
 		List<String> rawDataList = new ArrayList<String>();
 		try {
-			String line = getDataLine(sensorDataFilePath, keyToFindLine);
+			String line = DataLineExtractor.getDataLine(sensorDataFilePath, keyToFindLine);
 			String[] lineSplit = line.split(SEMICOLON);
 			for(int i = lineDataRange.getOffset(); i < lineDataRange.getOffset() + lineDataRange.getLength(); i++) {
 				rawDataList.add(lineSplit[i]);
@@ -67,10 +65,23 @@ public class AS7420DataFileParser implements ISensorDataFileParser {
 		return rawDataList;
 	}
 
+	private LineDataRange makeLineDataRange(String sensorDataFilePath) throws Exception {
+		String dataLine = DataLineExtractor.getDataLine(sensorDataFilePath, KEY_DATA_TYPE);
+		String[] dataLineSplit = dataLine.split(SEMICOLON);
+
+		//Log.i("dataLine = " + dataLine);
+		//Log.i("dataLineSplit = " + dataLineSplit);
+		
+		lineDataRange = new LineDataRange();
+		lineDataRange.setOffset(DataLineAnalyzer.findFirstIndexOfKey(dataLineSplit, dataType));
+		lineDataRange.setLength(DataLineAnalyzer.findCountOfKey(dataLineSplit, dataType));
+		return lineDataRange;
+	}
+
 	private List<List<String>> getRecordsFromFile(String sensorDataFilePath, String keyToFindLine) {
 		List<List<String>> dataList = new ArrayList<>();
 		try {
-			List<String> dataLines = getDataLines(sensorDataFilePath, keyToFindLine);
+			List<String> dataLines = DataLineExtractor.getDataLines(sensorDataFilePath, keyToFindLine);
 			for(String dataLine : dataLines) {
 				String[] lineSplit = dataLine.split(SEMICOLON);
 				List<String> rawDataList = new ArrayList<String>();
@@ -84,45 +95,4 @@ public class AS7420DataFileParser implements ISensorDataFileParser {
 		}
 		return dataList;
 	}
-
-	private LineDataRange makeLineDataRange(String sensorDataFilePath) throws Exception {
-		String dataLine = getDataLine(sensorDataFilePath, KEY_DATA_TYPE);
-		String[] dataLineSplit = dataLine.split(SEMICOLON);
-
-		//Log.i("dataLine = " + dataLine);
-		//Log.i("dataLineSplit = " + dataLineSplit);
-		
-		lineDataRange = new LineDataRange();
-		lineDataRange.setOffset(DataLineAnalyzer.findFirstIndexOfKey(dataLineSplit, dataType));
-		lineDataRange.setLength(DataLineAnalyzer.findCountOfKey(dataLineSplit, dataType));
-		return lineDataRange;
-	}
-	
-	private String getDataLine(String sensorDataFilePath, String keyToFindLine) throws IOException {
-		String dataLine = "";
-		BufferedReader br = new BufferedReader(new FileReader(sensorDataFilePath));
-		while ((dataLine = br.readLine()) != null) {
-			if (dataLine.contains(keyToFindLine)) {
-				break;
-			}
-		}
-
-		br.close();
-		return dataLine;
-	}
-
-	private List<String> getDataLines(String sensorDataFilePath, String keyToFindLine) throws IOException {
-		List<String> dataLines = new ArrayList<>();
-		BufferedReader br = new BufferedReader(new FileReader(sensorDataFilePath));
-		String dataLine = null;
-		while ((dataLine = br.readLine()) != null) {
-			if (dataLine.contains(keyToFindLine)) {
-				dataLines.add(dataLine);
-			}
-		}
-
-		br.close();
-		return dataLines;
-	}
-	
 }
