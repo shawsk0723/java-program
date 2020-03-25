@@ -3,6 +3,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import lab.sensor.irsensor.ISensorDataFileParser;
@@ -24,13 +26,16 @@ public class NeospectraDataFileParser implements ISensorDataFileParser {
 	
 	@Override
 	public List<String> getWaveLengthList(String sensorDataFilePath) {
-		return readRawDataByColumn(sensorDataFilePath, COLUMN_IDX_WAVELENGTH);
+		List<String> record = readRawDataByColumn(sensorDataFilePath, COLUMN_IDX_WAVELENGTH);
+		//Collections.reverse(record);
+		return record;
 	}
 
 	@Override
 	public SensorDataRecords getSensorDataRecords(String sensorDataFilePath) {
 		SensorDataRecords sensorDataRecords = new SensorDataRecords();
 		List<String> record = readRawDataByColumn(sensorDataFilePath, COLUMN_IDX_DATA_REFLECTANCE);
+		//Collections.reverse(record);
 		sensorDataRecords.write(record);
 		return sensorDataRecords;
 	}
@@ -54,8 +59,9 @@ public class NeospectraDataFileParser implements ISensorDataFileParser {
 					data = Double.parseDouble(lineSplit[columnIndex]);
 					data = Math.floor(data);
 					//System.out.println(data);
-					lineSplit[columnIndex]=Integer.toString((int)data);
-					//System.out.println(lineSplit[columnIndex]);					
+					lineSplit[columnIndex]= Integer.toString((int)data);
+					//System.out.println(lineSplit[columnIndex]);	
+					
 				}
 				rawDataList.add(lineSplit[columnIndex]);
 			}
