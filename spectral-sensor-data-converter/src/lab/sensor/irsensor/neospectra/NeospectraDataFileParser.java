@@ -27,7 +27,7 @@ public class NeospectraDataFileParser implements ISensorDataFileParser {
 	@Override
 	public List<String> getWaveLengthList(String sensorDataFilePath) {
 		List<String> record = readRawDataByColumn(sensorDataFilePath, COLUMN_IDX_WAVELENGTH);
-		//Collections.reverse(record);
+		Collections.reverse(record);
 		return record;
 	}
 
@@ -35,7 +35,7 @@ public class NeospectraDataFileParser implements ISensorDataFileParser {
 	public SensorDataRecords getSensorDataRecords(String sensorDataFilePath) {
 		SensorDataRecords sensorDataRecords = new SensorDataRecords();
 		List<String> record = readRawDataByColumn(sensorDataFilePath, COLUMN_IDX_DATA_REFLECTANCE);
-		//Collections.reverse(record);
+		Collections.reverse(record);
 		sensorDataRecords.write(record);
 		return sensorDataRecords;
 	}
